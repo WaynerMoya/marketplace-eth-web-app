@@ -12,9 +12,11 @@ const NETWORK = {
     4919: "Truffle Develop",
 }
 
+const targetNetwork = NETWORK[process.env.NEXT_PUBLIC_TARGET_CHAIN_ID]
+
 export const handler = (web3, provider) => () => {
 
-    const { mutate, ...reset } = useSWR(() =>
+    const { data, error, mutate, ...reset } = useSWR(() =>
         web3 ? "web3/network" : null,
         async () => {
             //const netId = await web3.eth.net.getId()
@@ -33,7 +35,12 @@ export const handler = (web3, provider) => () => {
 
     return {
         network: {
+            data,
+            hasFinishedFirstFetch: data || error,
             mutate,
+            isLoading: !data && !error,
+            targetNetwork: targetNetwork,
+            isSupported: data === targetNetwork,
             ...reset,
         }
     }
