@@ -1,15 +1,14 @@
 
-
-
-
 import { useWeb3 } from "@components/providers"
 import Link from "next/link"
 import { Button } from "@components/ui/common"
-import { useAccount } from "@components/web3/hooks/useAccount"
+import { useAccount } from "@components/hooks/web3/useAccount"
+import { useRouter } from "next/dist/client/router"
 
 export default function Footer() {
   const { connect, isLoading, isWeb3Loaded } = useWeb3()
   const { account } = useAccount()
+  const { pathname } = useRouter()
 
   return (
     <section>
@@ -23,7 +22,7 @@ export default function Footer() {
                   Home
                 </a>
               </Link>
-              <Link href="/" >
+              <Link href="/marketplace" >
                 <a
                   className="font-medium mr-8 text-gray-500 hover:text-gray-900">
                   Marketplace
@@ -43,33 +42,34 @@ export default function Footer() {
                   Wishlist
                 </a>
               </Link>
-              { isLoading ?
+              {isLoading ?
                 <Button
                   disabled={true}
                   onClick={connect}>
-                    Loading...
+                  Loading...
                 </Button> :
                 isWeb3Loaded ?
-                account.data ?
-                <Button
-                  hoverable={false}
-                  className="cursor-default">
-                  Hi there {account.isAdmin && "Admin"}
-                </Button> :
-                <Button
-                  onClick={connect}>
-                  Connect
-                </Button> :
-                <Button
-                  onClick={() => window.open("https://metamask.io/download.html", "_blank")}>
-                  Install Metamask
-                </Button>
+                  account.data ?
+                    <Button
+                      hoverable={false}
+                      className="cursor-default">
+                      Hi there {account.isAdmin && "Admin"}
+                    </Button> :
+                    <Button
+                      onClick={connect}>
+                      Connect
+                    </Button> :
+                  <Button
+                    onClick={() => window.open("https://metamask.io/download.html", "_blank")}>
+                    Install Metamask
+                  </Button>
               }
             </div>
           </div>
         </nav>
       </div>
-      { account.data &&
+      {account.data &&
+        !pathname.includes("/marketplace") &&
         <div className="flex justify-end pt-1 sm:px-6 lg:px-8">
           <div className="text-white bg-indigo-600 rounded-md p-2">
             {account.data}
