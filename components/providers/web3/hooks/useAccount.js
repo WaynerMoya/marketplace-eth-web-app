@@ -19,20 +19,18 @@ export const handler = (web3, provider) => () => {
 
   useEffect(() => {
     provider &&
-    provider.on("accountsChanged",
-      accounts => mutate(accounts[0] ?? null)
-    )
+      provider.on("accountsChanged",
+        accounts => mutate(accounts[0] ?? null)
+      )
   }, [provider])
 
   return {
-    account: {
-      data,
-      isAdmin: (
-        data &&
-        //adminAddresses[web3.utils.keccak256(data)]) ?? false,
-        adminAddresses[data]) ?? false,
-      mutate,
-      ...rest
-    }
+    data,
+    isAdmin: (
+      data &&
+      //adminAddresses[web3.utils.keccak256(data)]) ?? false,
+      adminAddresses[data]) ?? false,
+    mutate,
+    ...rest
   }
 }

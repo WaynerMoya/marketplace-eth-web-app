@@ -6,12 +6,13 @@ import { setupHooks } from "./hooks/setupHooks";
 
 const Web3Context = createContext(null)
 
-export default function Web3Provider({children}) {
+export default function Web3Provider({ children }) {
   const [web3Api, setWeb3Api] = useState({
     provider: null,
     web3: null,
     contract: null,
-    isLoading: true
+    isLoading: true,
+    hooks: setupHooks()
   })
 
   useEffect(() => {
@@ -24,10 +25,11 @@ export default function Web3Provider({children}) {
           provider,
           web3,
           contract: null,
-          isLoading: false
+          isLoading: false,
+          hooks: setupHooks(web3, provider)
         })
       } else {
-        setWeb3Api(api => ({...api, isLoading: false}))
+        setWeb3Api(api => ({ ...api, isLoading: false }))
         console.error("Please, install Metamask.")
       }
     }
@@ -36,15 +38,16 @@ export default function Web3Provider({children}) {
   }, [])
 
   const _web3Api = useMemo(() => {
-    const { web3, provider } = web3Api
+    const { web3, provider, isLoading } = web3Api
     return {
       ...web3Api,
-      isWeb3Loaded: web3 != null,
-      getHooks: () => setupHooks(web3, provider),
+      //isWeb3Loaded: web3 != null,
+      requireInstall: !isLoading && !web3,
+      //getHooks: () => setupHooks(web3, provider),
       connect: provider ?
         async () => {
           try {
-            await provider.request({method: "eth_requestAccounts"})
+            await provider.request({ method: "eth_requestAccounts" })
           } catch {
             location.reload()
           }
@@ -65,7 +68,7 @@ export function useWeb3() {
 }
 
 export function useHooks(cb) {
-  const { getHooks } = useWeb3()
-  return cb(getHooks())
+  const { hooks } = useWeb3()
+  return cb(hooks)
 }
 
