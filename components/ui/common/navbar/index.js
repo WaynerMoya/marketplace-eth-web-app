@@ -6,6 +6,7 @@ import { useAccount } from "@components/hooks/web3"
 import { useRouter } from "next/dist/client/router"
 
 export default function Navbar() {
+  
   const { connect, isLoading, requireInstall } = useWeb3()
   const { account } = useAccount()
   const { pathname } = useRouter()
